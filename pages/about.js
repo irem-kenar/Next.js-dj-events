@@ -1,8 +1,11 @@
+import Link from 'next/link';
 
 export default function AboutPage() {
     return (
         <div>
-            About Page
+            <h1>About Page</h1>
+            <Link href="/">Home Page</Link>
         </div>
+
     )
 }
