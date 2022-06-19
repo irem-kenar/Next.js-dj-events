@@ -2,7 +2,8 @@
 const { events } = require('../data.json')
 
 export default function handler(req, res) {
-    const evt = events.filter(ev => ev.slug === req.query.slug)
+    // const evt = events?.filter(ev => ev.slug === req.query.slug)
+    const evt = events?.data?.filter(ev => ev.id === req.query.id)
 
     if (req.method === 'GET') {
         res.status(200).json(evt)

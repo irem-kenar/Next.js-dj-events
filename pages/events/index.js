@@ -6,20 +6,21 @@ export default function EventsPage({ events }) {
     return (
         <Layout>
             <h1>Events</h1>
-            {events.length === 0 && <h3>No events found</h3>}
-            {events.map(evt => (
+            {events?.length === 0 && <h3>No events found</h3>}
+            {events?.map(evt => (
                 <EventItem key={evt.id} evt={evt} />
             ))}
         </Layout>
     )
 }
 
+// TODO change url to be sorted by date
 export async function getStaticProps() {
-    const res = await fetch(`${API_URL}/events?_sort=date:ASC`);
+    const res = await fetch(`${API_URL}/api/events?populate=*`);
     const events = await res.json();
 
     return {
-        props: { events },
+        props: { events: events.data },
         revalidate: 1,
     }
 }
