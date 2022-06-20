@@ -24,7 +24,7 @@ export default function EventPage({ evt }) {
                     </a>
                 </div>
                 <span>
-                    {evt?.attributes?.date} at {evt?.attributes?.time}
+                    {new Date(evt?.attributes?.date).toLocaleDateString('en-US')} at {evt?.attributes?.time}
                 </span>
                 <h1>{evt?.attributes?.name}</h1>
                 {evt?.attributes?.image && (

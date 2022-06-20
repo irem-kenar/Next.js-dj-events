@@ -16,7 +16,7 @@ export default function EventsPage({ events }) {
 
 // TODO change url to be sorted by date
 export async function getStaticProps() {
-    const res = await fetch(`${API_URL}/api/events?populate=*`);
+    const res = await fetch(`${API_URL}/api/events?populate=*&sort[0]=date`);
     const events = await res.json();
 
     return {
