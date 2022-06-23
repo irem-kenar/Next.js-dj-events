@@ -1,12 +1,17 @@
 import qs from 'qs';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 import Layout from "@/components/Layout"
 import EventItem from "@/components/EventItem"
 import { API_URL } from "@/config/index"
 
 export default function SearchPage({ events }) {
+    const router = useRouter();
+
     return (
-        <Layout>
-            <h1>Events</h1>
+        <Layout title='Search Results'>
+            <Link href='/events'>Go back</Link>
+            <h1>Search Results for {router.query.term}</h1>
             {events?.length === 0 && <h3>No events found</h3>}
             {events?.map(evt => (
                 <EventItem key={evt.id} evt={evt} />
@@ -15,8 +20,8 @@ export default function SearchPage({ events }) {
     )
 }
 
-// TODO change url to be sorted by date
 export async function getServerSideProps({ query: { term } }) {
+
     const query = qs.stringify({
         filters: {
             $or: [{
@@ -25,7 +30,7 @@ export async function getServerSideProps({ query: { term } }) {
                 }
             },
             {
-                perfomers: {
+                performers: {
                     $containsi: term,
                 }
             },
@@ -41,7 +46,7 @@ export async function getServerSideProps({ query: { term } }) {
             }]
         },
     });
-    //TODO fix the url
+
     const res = await fetch(`${API_URL}/api/events?populate=*&sort[0]=date&${query}`);
     const events = await res.json();
 
