@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Image from 'next/image'
 import Layout from '@/components/Layout'
+import Modal from '@/components/Modal'
+import ImageUpload from '@/components/ImageUpload'
 import { API_URL } from '@/config/index'
 import styles from '@/styles/Form.module.css'
 
@@ -22,8 +24,11 @@ export default function EditEventPage({ evt }) {
         description: evt.attributes.description,
     })
     const [imagePreview, setImagePreview] = useState(
-        evt.attributes.image ? evt.attributes.image.data.attributes.url : null
+        evt.attributes.image ? evt.attributes.image?.data?.attributes?.formats?.thumbnail?.url : null
     )
+    console.log('evt.attributes.image', evt.attributes.image)
+    console.log('imagePreview', imagePreview)
+    const [showModal, setShowModal] = useState(false)
 
     const router = useRouter()
 
@@ -39,7 +44,7 @@ export default function EditEventPage({ evt }) {
             toast.error('Please fill in all fields')
         }
 
-        const res = await fetch(`${API_URL}/api/events/${evt.id}`, {
+        const res = await fetch(`${API_URL}/api/events/${evt.id}?populate=*`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -58,6 +63,13 @@ export default function EditEventPage({ evt }) {
     const handleInputChange = (e) => {
         const { name, value } = e.target
         setValues({ ...values, [name]: value })
+    }
+
+    const imageUploaded = async (e) => {
+        const res = await fetch(`${API_URL}/api/events/${evt.id}?populate=*`)
+        const data = await res.json()
+        setImagePreview(data?.data?.attributes?.image?.data?.attributes?.formats?.thumbnail?.url)
+        setShowModal(false)
     }
 
     return (
@@ -153,10 +165,16 @@ export default function EditEventPage({ evt }) {
             )}
 
             <div>
-                <button className='btn-secondary btn-icon'>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className='btn-secondary btn-icon'
+                >
                     <FaImage /> Set Image
                 </button>
             </div>
+            <Modal show={showModal} onClose={() => setShowModal(false)}>
+                <ImageUpload evtId={evt.id} imageUploaded={imageUploaded} />
+            </Modal>
         </Layout>
     )
 }
@@ -164,6 +182,7 @@ export default function EditEventPage({ evt }) {
 export async function getServerSideProps({ params: { id } }) {
     const res = await fetch(`${API_URL}/api/events/${id}?populate=*`)
     const evt = await res.json()
+    console.log(evt)
 
     return {
         props: {

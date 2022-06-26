@@ -67,7 +67,7 @@ export default function EventPage({ evt }) {
 
 // with getStaticPaths & getStaticProps:
 export async function getStaticPaths() {
-    const res = await fetch(`${API_URL}/api/events`);
+    const res = await fetch(`${API_URL}/api/events?populate=*`);
     const events = await res.json();
 
     const paths = events?.data?.map(evt => ({
